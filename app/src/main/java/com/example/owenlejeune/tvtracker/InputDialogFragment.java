@@ -1,162 +1,135 @@
-package com.example.owenlejeune.tvtracker;
+package com.example.owenlejeune.tvtracker
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
-import android.icu.util.Calendar;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
+import android.app.DialogFragment
+import android.content.DialogInterface
+import android.icu.util.Calendar
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.CheckBox
+import android.widget.DatePicker
+import android.widget.EditText
+import android.widget.Toast
 
-import java.util.Date;
+import java.util.Date
 
 /**
  * Created by owenlejeune on 2017-10-30.
  */
 
-public class InputDialogFragment extends DialogFragment {
+class InputDialogFragment : DialogFragment() {
+    var seasonInput: EditText? = null
+        private set
+    var episodeInput: EditText? = null
+        private set
+    var titleInput: EditText? = null
+        private set
+    var airDate: DatePicker? = null
+        private set
+    private var unknownDateBox: CheckBox? = null
+    private var view: View? = null
+    var season: Int = 0
+        private set
+    var episode: Int = 0
+        private set
+    var title: String? = null
+        private set
+    var date: Date? = null
+        private set
+    private var isNew: Boolean = false
+    var isHasDate: Boolean = false
+        private set
+    private var show: TVShow? = null
 
-    private static InputDialogListenerInterface listener;
-    private EditText seasonInput, episodeInput, titleInput;
-    private DatePicker airDate;
-    private CheckBox unknownDateBox;
-    private View view;
-    private int season, episode;
-    private String title;
-    private Date date;
-    private boolean isNew;
-    private boolean hasDate;
-    private TVShow show;
+    override fun onCreateDialog(savedInstaceState: Bundle): Dialog {
+        val builder = AlertDialog.Builder(activity)
+        val inflater = activity.layoutInflater
 
-    public Dialog onCreateDialog(Bundle savedInstaceState){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        view = inflater.inflate(R.layout.input_layout, null)
 
-        view = inflater.inflate(R.layout.input_layout, null);
+        builder.setView(view)
 
-        builder.setView(view);
-
-        seasonInput = view.findViewById(R.id.season_number);
-        episodeInput = view.findViewById(R.id.episode_number);
-        titleInput = view.findViewById(R.id.show_title);
-        airDate = view.findViewById(R.id.show_calendar);
-        unknownDateBox = view.findViewById(R.id.unknown_date_check);
-        unknownDateBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(unknownDateBox.isChecked()){
-                    airDate.setEnabled(false);
-                    hasDate = false;
-                }else{
-                    airDate.setEnabled(true);
-                    hasDate = true;
-                }
+        seasonInput = view!!.findViewById(R.id.season_number)
+        episodeInput = view!!.findViewById(R.id.episode_number)
+        titleInput = view!!.findViewById(R.id.show_title)
+        airDate = view!!.findViewById(R.id.show_calendar)
+        unknownDateBox = view!!.findViewById(R.id.unknown_date_check)
+        unknownDateBox!!.setOnClickListener {
+            if (unknownDateBox!!.isChecked) {
+                airDate!!.isEnabled = false
+                isHasDate = false
+            } else {
+                airDate!!.isEnabled = true
+                isHasDate = true
             }
-        });
-
-        isNew = true;
-        hasDate = true;
-
-        if(show != null){
-            seasonInput.setText("" + show.getSeason());
-            titleInput.setText(show.getTitle());
-            episodeInput.setText("" + show.getEpisode());
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(show.getNextAir());
-            airDate.init(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), null);
         }
 
-        builder.setNegativeButton("CANCEL", null);
-        builder.setPositiveButton("CREATE", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        isNew = true
+        isHasDate = true
 
-                season = (seasonInput.getText().toString().isEmpty()) ? 0 : Integer.parseInt(seasonInput.getText().toString());
-                episode = (episodeInput.getText().toString().isEmpty()) ? 0 : Integer.parseInt(episodeInput.getText().toString());
-                title = titleInput.getText().toString();
-                date = getDateFromDatePicker(airDate);
+        if (show != null) {
+            seasonInput!!.setText("" + show!!.season)
+            titleInput!!.setText(show!!.title)
+            episodeInput!!.setText("" + show!!.episode)
+            val cal = Calendar.getInstance()
+            cal.time = show!!.nextAir
+            airDate!!.init(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), null)
+        }
 
-                if(season > 0 && episode > 0 && !title.isEmpty()){
-                    if(hasDate || date != null){
-                        listener.onDialogPositiveClick(InputDialogFragment.this);
-                    }
+        builder.setNegativeButton("CANCEL", null)
+        builder.setPositiveButton("CREATE") { dialogInterface, i ->
+            season = if (seasonInput!!.text.toString().isEmpty()) 0 else Integer.parseInt(seasonInput!!.text.toString())
+            episode = if (episodeInput!!.text.toString().isEmpty()) 0 else Integer.parseInt(episodeInput!!.text.toString())
+            title = titleInput!!.text.toString()
+            date = getDateFromDatePicker(airDate)
+
+            if (season > 0 && episode > 0 && !title!!.isEmpty()) {
+                if (isHasDate || date != null) {
+                    listener!!.onDialogPositiveClick(this@InputDialogFragment)
                 }
             }
-        });
-
-        return builder.create();
-    }
-
-    public void setFields(TVShow show){
-        isNew = false;
-//        seasonInput.setText("" + show.getSeason());
-//        titleInput.setText(show.getTitle());
-//        episodeInput.setText("" + show.getEpisode());
-//        Date date = show.getNextAir();
-//        airDate.init(date.getYear(), date.getMonth(), date.getDay(), null);
-        this.show = show;
-    }
-
-    private Date getDateFromDatePicker(DatePicker picker){
-        int day = picker.getDayOfMonth();
-        int month = picker.getMonth();
-        int year = picker.getYear();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month, day);
-
-        return calendar.getTime();
-    }
-
-
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
-        try{
-            listener = (InputDialogListenerInterface) activity;
-        }catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement InputDialogListenerInterface");
         }
+
+        return builder.create()
     }
 
-    public int getSeason() {
-        return season;
+    fun setFields(show: TVShow) {
+        isNew = false
+        //        seasonInput.setText("" + show.getSeason());
+        //        titleInput.setText(show.getTitle());
+        //        episodeInput.setText("" + show.getEpisode());
+        //        Date date = show.getNextAir();
+        //        airDate.init(date.getYear(), date.getMonth(), date.getDay(), null);
+        this.show = show
     }
 
-    public int getEpisode() {
-        return episode;
+    private fun getDateFromDatePicker(picker: DatePicker?): Date {
+        val day = picker!!.dayOfMonth
+        val month = picker.month
+        val year = picker.year
+
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month, day)
+
+        return calendar.time
     }
 
-    public String getTitle() {
-        return title;
+
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        try {
+            listener = activity as InputDialogListenerInterface
+        } catch (e: ClassCastException) {
+            throw ClassCastException(activity.toString() + " must implement InputDialogListenerInterface")
+        }
+
     }
 
-    public Date getDate() {
-        return date;
-    }
+    companion object {
 
-    public EditText getSeasonInput() {
-        return seasonInput;
-    }
-
-    public EditText getEpisodeInput() {
-        return episodeInput;
-    }
-
-    public EditText getTitleInput() {
-        return titleInput;
-    }
-
-    public DatePicker getAirDate() {
-        return airDate;
-    }
-
-    public boolean isHasDate() {
-        return hasDate;
+        private var listener: InputDialogListenerInterface? = null
     }
 }

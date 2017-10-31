@@ -1,54 +1,45 @@
-package com.example.owenlejeune.tvtracker;
+package com.example.owenlejeune.tvtracker
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.Calendar;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import java.util.ArrayList
+import java.util.Calendar
 
 /**
  * Created by owenlejeune on 2017-10-30.
  */
 
-public class TVShowArrayAdapter extends ArrayAdapter {
-    private final Context context;
-    private final ArrayList<TVShow> values;
+class TVShowArrayAdapter(private val context: Context, private val values: ArrayList<TVShow>) : ArrayAdapter<*>(context, -1, values) {
 
-    public TVShowArrayAdapter(Context context, ArrayList<TVShow> values){
-        super(context, -1, values);
-        this.context = context;
-        this.values = values;
-    }
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val rowView = inflater.inflate(R.layout.listview_item_row, parent, false)
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.listview_item_row, parent, false);
+        val current = values[position]
 
-        TVShow current = values.get(position);
+        val title = rowView.findViewById<TextView>(R.id.show_title_row_label)
+        val episode = rowView.findViewById<TextView>(R.id.next_episode_label)
+        val date = rowView.findViewById<TextView>(R.id.air_date_label)
 
-        TextView title = rowView.findViewById(R.id.show_title_row_label);
-        TextView episode = rowView.findViewById(R.id.next_episode_label);
-        TextView date = rowView.findViewById(R.id.air_date_label);
-
-        title.setText(current.getTitle());
-        String epString = "s" + current.getSeason() + "e" + current.getEpisode();
+        title.text = current.title
+        val epString = "s" + current.season + "e" + current.episode
         //episode.setText(epString);
 
-        Calendar c = Calendar.getInstance();
-        c.setTime(current.getNextAir());
+        val c = Calendar.getInstance()
+        c.time = current.nextAir
 
-        date.setText(epString);
+        date.text = epString
 
-        if(c.get(Calendar.YEAR) == 3000){
-            date.setText(date.getText() + "  ?");
-        }else{
-            date.setText(date.getText() + "  " + current.getNextAirString());
+        if (c.get(Calendar.YEAR) == 3000) {
+            date.text = date.text.toString() + "  ?"
+        } else {
+            date.text = date.text.toString() + "  " + current.nextAirString
         }
 
-        return rowView;
+        return rowView
     }
 }
