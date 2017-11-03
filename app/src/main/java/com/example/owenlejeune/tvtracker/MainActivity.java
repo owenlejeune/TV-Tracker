@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements InputDialogListen
                         dialog.show(getFragmentManager(), "New TV Show");
                         dialog.setFields(show);
                         showList.remove(show);
+                        update();
                     }
                 });
 
