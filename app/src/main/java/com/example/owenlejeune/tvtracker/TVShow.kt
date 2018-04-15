@@ -8,8 +8,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
 /**
  * Created by owenlejeune on 2017-10-30.
@@ -21,7 +20,7 @@ class TVShow(val title: String, val season: Int, episode: Int, nextAir: Date) {
     var nextAir: Date? = null
         private set
     private val SHOW_INCREMENT = 7
-    private val dateFormat = SimpleDateFormat("MMM dd")
+    private val dateFormat = SimpleDateFormat("MMM dd", Locale.CANADA)
 
     val nextAirString: String
         get() = dateFormat.format(nextAir)
@@ -62,7 +61,7 @@ class TVShow(val title: String, val season: Int, episode: Int, nextAir: Date) {
     }
 
     companion object {
-        private val SDF = SimpleDateFormat("yyyy-MM-dd")
+        private val SDF = SimpleDateFormat("yyyy-MM-dd", Locale.CANADA)
 
         fun readFrom(file: DataInputStream): TVShow? {
             try {

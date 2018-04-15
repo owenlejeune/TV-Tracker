@@ -94,47 +94,7 @@ public class MainActivity extends AppCompatActivity implements InputDialogListen
             }
         });
         thisActivity = this;
-//
-//        Calendar c = Calendar.getInstance();
-//        c.set(2017, 11, 29);
-//
-//        for(int i = 0; i < 20; i++){
-//            showList.add(new TVShow("show" + i, i, i, c.getTime()));
-//            c.add(c.DAY_OF_YEAR, -16);
-//        }
 
-
-        //******************************************//
-
-//        Calendar c = Calendar.getInstance();
-//        c.set(2017, 9, 31);
-//        showList.add(new TVShow("Brooklyn 99", 5, 5, c.getTime()));
-//        c.set(2017, 10, 1);
-//        showList.add(new TVShow("South Park", 21, 7, c.getTime()));
-//        c.set(2017, 10, 2);
-//        showList.add(new TVShow("Modern Family", 9, 6, c.getTime()));
-//        showList.add(new TVShow("Orville", 1, 8, c.getTime()));
-//        showList.add(new TVShow("Doctor Doctor", 2, 11, c.getTime()));
-//        c.set(2017, 9, 29);
-//        showList.add(new TVShow("Deuce", 1, 8, c.getTime()));
-//        showList.add(new TVShow("Outlander", 3, 7, c.getTime()));
-//        showList.add(new TVShow("Bob's Burgers", 8, 4, c.getTime()));
-//        showList.add(new TVShow("Family Guy", 16, 5, c.getTime()));
-//        c.set(2017, 10, 5);
-//        showList.add(new TVShow("Last Week Tonight", 4, 29, c.getTime()));
-//        showList.add(new TVShow("Star Trek Discovery", 1, 8, c.getTime()));
-//        showList.add(new TVShow("Shameless", 8, 1, c.getTime()));
-//        c.set(3000, 0, 1);
-//        showList.add(new TVShow("Comrade Detective", 2, 1, c.getTime()));
-//        showList.add(new TVShow("Grand Tour", 2, 1, c.getTime()));
-//        showList.add(new TVShow("Sherlock", 5, 1, c.getTime()));
-//        showList.add(new TVShow("Silicon Valley", 5, 1, c.getTime()));
-//        showList.add(new TVShow("Game of Thrones", 8, 1, c.getTime()));
-//        showList.add(new TVShow("Insecure", 3, 1, c.getTime()));
-//        showList.add(new TVShow("Rick and Morty", 4, 1, c.getTime()));
-
-
-        //*****************************************//
         read(dataFile, showList);
 
         update();
@@ -191,8 +151,6 @@ public class MainActivity extends AppCompatActivity implements InputDialogListen
             date = c.getTime();
         }
 
-       // Date date = fragment.getDate();
-//        TVShow temp = new TVShow(title, season, episode, date);
         showList.add(new TVShow(title, season, episode, date));
         update();
     }
@@ -205,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements InputDialogListen
             for(TVShow t : data){
                 t.writeTo(dataOut);
             }
-            //Toast.makeText(getApplicationContext(), "data written to " + file, Toast.LENGTH_SHORT).show();
             dataOut.close();
         }catch (Exception e){
             e.printStackTrace();
@@ -219,9 +176,7 @@ public class MainActivity extends AppCompatActivity implements InputDialogListen
             DataInputStream dataIn = new DataInputStream(in);
 
             while(dataIn.available() > 0){
-//                TVShow s = TVShow.readFrom(dataIn);
                 data.add(TVShow.Companion.readFrom(dataIn));
-//                data.add(s);
             }
             dataIn.close();
         }catch (Exception e){
